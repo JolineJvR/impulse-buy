@@ -1,0 +1,38 @@
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.card-and-button-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bg-purple{
+    background-color: #8A3FFC !important;
+}
+
+.item-alignment-purple{
+    min-width: 200px;
+    max-width: 600px;
+    padding: 20px;
+    box-shadow: 20px 20px 22px 0px #868585;
+    color: #000;
+}
+
+.bg-grey{
+    background-color: #b4b4b4 !important;
+}
+
+.item-alignment-grey{
+    min-width: 200px;
+    max-width: 600px;
+    min-height: 200px;
+    max-height: 600px;
+    padding: 20px;
+    box-shadow: 20px 20px 22px 0px #8A3FFC;
+}

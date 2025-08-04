@@ -1,0 +1,26 @@
+.container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bg-purple{
+    background-color: #8A3FFC !important;
+}
+
+.item-alignment-purple{
+    min-width: 200px;
+    max-width: 600px;
+    padding: 20px;
+    box-shadow: 20px 20px 22px 0px #868585;
+    color: #000;
+}
+
+.card-decoration{
+    text-decoration: underline #000;
+}
+
+.card-img {
+    height: 150px;
+    width: auto;
+}

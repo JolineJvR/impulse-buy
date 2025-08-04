@@ -1,0 +1,22 @@
+.container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bg-grey{
+    background-color: #b4b4b4 !important;
+}
+
+.item-alignment-grey{
+    min-width: 200px;
+    max-width: 600px;
+    min-height: 200px;
+    padding: 20px;
+    box-shadow: 20px 20px 22px 0px #8A3FFC;
+    overflow: auto;
+}
+
+.card-decoration{
+    text-decoration: underline solid #000;
+}

@@ -1,0 +1,21 @@
+.center-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.search-bar-container {
+    padding: 30px 20px;
+    background-color: #b4b4b4;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px #8a3ffc;
+    border-radius: .5rem;
+}
