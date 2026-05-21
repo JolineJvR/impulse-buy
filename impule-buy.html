@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impulse-Buy — Joline.dev</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#fdf8f0;
+  --ivory:#f8f2e6;
+  --parchment:#f0e8d4;
+  --parchment2:#e4d8c0;
+  --border:#d4c4a0;
+  --border2:#c0aa80;
+  --tan:#a08858;
+  --gold:#c8980a;
+  --gold-light:#e8b820;
+  --gold-pale:rgba(200,152,10,0.1);
+  --gold-glow:rgba(200,152,10,0.2);
+  --brown:#6a4a20;
+  --brown-dark:#3e2c10;
+  --ink:#1e1608;
+  --ink-light:#3a2c14;
+  --muted:#8a7250;
+  --text:#2a1e0a;
+  --shadow:rgba(30,22,8,0.12);
+  --shadow2:rgba(30,22,8,0.06);
+}
+html,body{width:100%;min-height:100%;background:var(--cream);color:var(--text);font-family:'Syne',sans-serif}
+
+/* ── VIEWS ── */
+.view{display:none}
+.view.active{display:block}
+
+/* ── TOPNAV ── */
+#topnav{position:sticky;top:0;z-index:300;background:rgba(253,248,240,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 44px}
+.nav-left{display:flex;align-items:center;gap:32px}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--brown-dark);letter-spacing:.04em;cursor:pointer;display:flex;align-items:center;gap:8px}
+.nav-logo span{color:var(--gold);font-size:18px}
+.nav-links{display:flex;gap:24px}
+.nav-link{font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);cursor:pointer;transition:color .2s;text-transform:uppercase}
+.nav-link:hover,.nav-link.active{color:var(--brown-dark)}
+.nav-right{display:flex;align-items:center;gap:20px}
+.nav-back{font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-back:hover{color:var(--brown-dark)}
+.cart-btn{position:relative;background:var(--brown-dark);color:var(--cream);border:none;font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.2em;padding:9px 20px;cursor:pointer;transition:background .2s;display:flex;align-items:center;gap:8px;border-radius:2px}
+.cart-btn:hover{background:var(--brown)}
+.cart-count{background:var(--gold);color:var(--brown-dark);border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;position:absolute;top:-6px;right:-6px;transition:transform .2s}
+.cart-count.bump{animation:bump .3s ease}
+@keyframes bump{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
+
+/* ── HERO ── */
+#hero{background:linear-gradient(160deg,var(--brown-dark) 0%,#2a1e08 40%,#1a1206 100%);padding:80px 44px 72px;position:relative;overflow:hidden}
+#hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 30% 60%,rgba(200,152,10,.12) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 80% 30%,rgba(200,152,10,.06) 0%,transparent 60%)}
+.hero-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+@media(max-width:800px){.hero-inner{grid-template-columns:1fr}}
+.hero-tag{font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.35em;color:var(--gold);margin-bottom:18px;text-transform:uppercase}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(44px,6vw,76px);font-weight:300;color:var(--cream);line-height:1;margin-bottom:16px}
+.hero-title em{font-style:italic;color:var(--gold-light)}
+.hero-sub{font-size:14px;color:rgba(253,248,240,.6);line-height:1.75;max-width:380px;margin-bottom:32px}
+.hero-cta{display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:var(--brown-dark);font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.2em;padding:13px 28px;border:none;cursor:pointer;transition:background .2s,transform .15s;border-radius:2px;font-weight:700}
+.hero-cta:hover{background:var(--gold-light);transform:translateY(-2px)}
+.hero-right{display:flex;flex-direction:column;gap:16px}
+.hero-stat-row{display:flex;gap:24px}
+.hero-stat{background:rgba(255,255,255,.05);border:1px solid rgba(200,152,10,.2);padding:18px 22px;border-radius:3px;flex:1}
+.hero-stat-val{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--gold-light);line-height:1;margin-bottom:4px}
+.hero-stat-key{font-family:'Syne Mono',monospace;font-size:9px;letter-spacing:.2em;color:rgba(253,248,240,.4)}
+.hero-featured{background:rgba(255,255,255,.04);border:1px solid rgba(200,152,10,.15);padding:20px;border-radius:3px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:border-color .2s}
+.hero-featured:hover{border-color:rgba(200,152,10,.4)}
+.hero-featured-thumb{width:60px;height:60px;border-radius:2px;background:linear-gradient(135deg,rgba(200,152,10,.2),rgba(200,152,10,.05));display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.hero-featured-name{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--cream);margin-bottom:3px}
+.hero-featured-price{font-family:'Syne Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:.1em}
+.hero-featured-tag{font-family:'Syne Mono',monospace;font-size:9px;letter-spacing:.15em;color:rgba(253,248,240,.4);margin-bottom:6px}
+
+/* ── SHOP VIEW ── */
+#shop-bar{padding:28px 44px 0;max-width:1188px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.shop-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--ink)}
+.shop-title em{font-style:italic;color:var(--gold)}
+.shop-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.cat-filter{display:flex;gap:7px;flex-wrap:wrap}
+.cat-btn{font-family:'Syne Mono',monospace;font-size:9.5px;letter-spacing:.15em;padding:6px 14px;border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:20px;cursor:pointer;transition:all .18s}
+.cat-btn:hover{border-color:var(--gold);color:var(--brown)}
+.cat-btn.active{background:var(--brown-dark);border-color:var(--brown-dark);color:var(--cream)}
+.sort-select{font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.1em;padding:7px 12px;border:1px solid var(--border);background:var(--cream);color:var(--muted);cursor:pointer;outline:none;border-radius:2px}
+.sort-select:focus{border-color:var(--gold)}
+
+/* ── PRODUCT GRID ── */
+#product-grid{max-width:1100px;margin:28px auto 60px;padding:0 44px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:24px}
+@media(max-width:600px){#product-grid{padding:0 20px;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px}}
+
+.product-card{background:var(--ivory);border:1px solid var(--border);border-radius:3px;overflow:hidden;cursor:pointer;transition:transform .22s,box-shadow .22s,border-color .22s;position:relative}
+.product-card:hover{transform:translateY(-5px);box-shadow:0 16px 40px var(--shadow),0 4px 8px var(--shadow2);border-color:var(--border2)}
+
+/* 3D model placeholder */
+.product-thumb{width:100%;aspect-ratio:1;background:linear-gradient(135deg,var(--parchment) 0%,var(--parchment2) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;transition:background .2s}
+.product-card:hover .product-thumb{background:linear-gradient(135deg,var(--parchment2) 0%,#d4c4a0 100%)}
+.product-thumb-icon{font-size:48px;margin-bottom:8px;transition:transform .3s}
+.product-card:hover .product-thumb-icon{transform:scale(1.1) rotate(-3deg)}
+.product-thumb-label{font-family:'Syne Mono',monospace;font-size:8px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;background:rgba(253,248,240,.8);padding:3px 10px;border-radius:10px}
+.product-badge{position:absolute;top:10px;left:10px;font-family:'Syne Mono',monospace;font-size:8.5px;letter-spacing:.12em;padding:3px 9px;border-radius:1px;text-transform:uppercase}
+.badge-new{background:var(--brown-dark);color:var(--cream)}
+.badge-sale{background:var(--gold);color:var(--brown-dark);font-weight:700}
+.badge-limited{background:transparent;border:1px solid var(--border2);color:var(--muted)}
+
+.product-body{padding:16px}
+.product-cat{font-family:'Syne Mono',monospace;font-size:8.5px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.product-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--ink);margin-bottom:8px;line-height:1.3}
+.product-footer{display:flex;align-items:center;justify-content:space-between}
+.product-price{font-family:'Syne Mono',monospace;font-size:13px;color:var(--brown-dark);letter-spacing:.05em}
+.product-price .old-price{color:var(--muted);text-decoration:line-through;font-size:11px;margin-right:6px}
+.product-add{background:none;border:1px solid var(--border2);color:var(--muted);font-size:14px;width:30px;height:30px;border-radius:50%;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.product-add:hover{background:var(--brown-dark);border-color:var(--brown-dark);color:var(--cream)}
+
+/* ── PRODUCT DETAIL VIEW ── */
+#detail-view{max-width:1100px;margin:0 auto;padding:44px}
+@media(max-width:700px){#detail-view{padding:24px 20px}}
+.detail-back{font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin-bottom:36px;transition:color .2s}
+.detail-back::before{content:'←'}
+.detail-back:hover{color:var(--brown-dark)}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+@media(max-width:700px){.detail-grid{grid-template-columns:1fr}}
+
+/* 3D viewer placeholder */
+.detail-viewer{aspect-ratio:1;background:linear-gradient(135deg,var(--parchment) 0%,var(--parchment2) 100%);border:1px solid var(--border);border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;position:relative;overflow:hidden}
+.detail-viewer-icon{font-size:80px;animation:float 4s ease infinite}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+.detail-viewer-label{font-family:'Syne Mono',monospace;font-size:9px;letter-spacing:.25em;color:var(--muted);background:rgba(253,248,240,.9);padding:5px 14px;border-radius:10px}
+.detail-viewer-hint{position:absolute;bottom:14px;font-family:'Syne Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--muted);display:flex;align-items:center;gap:6px}
+.detail-viewer-hint::before{content:'✦';color:var(--gold)}
+.detail-thumbs{display:flex;gap:8px;margin-top:12px}
+.detail-thumb{width:64px;height:64px;background:var(--parchment);border:1.5px solid var(--border);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;transition:border-color .2s}
+.detail-thumb:hover,.detail-thumb.active{border-color:var(--gold)}
+
+.detail-info{}
+.detail-cat{font-family:'Syne Mono',monospace;font-size:9px;letter-spacing:.25em;color:var(--gold);text-transform:uppercase;margin-bottom:10px}
+.detail-name{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,44px);font-weight:300;color:var(--ink);line-height:1;margin-bottom:12px}
+.detail-name em{font-style:italic}
+.detail-rating{display:flex;align-items:center;gap:8px;margin-bottom:18px}
+.stars{color:var(--gold);font-size:13px;letter-spacing:2px}
+.rating-count{font-family:'Syne Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em}
+.detail-price{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--brown-dark);margin-bottom:6px}
+.detail-price .old{font-size:20px;color:var(--muted);text-decoration:line-through;margin-right:8px}
+.detail-price-note{font-family:'Syne Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--muted);margin-bottom:24px}
+.detail-divider{width:40px;height:1px;background:linear-gradient(90deg,var(--gold),transparent);margin-bottom:20px}
+.detail-desc{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--ink-light);line-height:1.8;margin-bottom:24px}
+
+.detail-options{margin-bottom:24px}
+.option-label{font-family:'Syne Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:10px}
+.option-chips{display:flex;gap:8px;flex-wrap:wrap}
+.option-chip{font-family:'Syne Mono',monospace;font-size:10px;padding:7px 16px;border:1px solid var(--border);color:var(--muted);cursor:pointer;border-radius:2px;transition:all .18s}
+.option-chip:hover{border-color:var(--gold);color:var(--brown)}
+.option-chip.selected{background:var(--brown-dark);border-color:var(--brown-dark);color:var(--cream)}
+
+.detail-qty{display:flex;align-items:center;gap:0;margin-bottom:24px;border:1px solid var(--border);border-radius:2px;width:fit-content}
+.qty-btn{width:40px;height:40px;background:none;border:none;font-size:18px;color:var(--muted);cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center}
+.qty-btn:hover{background:var(--parchment);color:var(--brown-dark)}
+.qty-val{width:48px;text-align:center;font-family:'Syne Mono',monospace;font-size:13px;color:var(--ink);border-left:1px solid var(--border);border-right:1px solid var(--border);height:40px;display:flex;align-items:center;justify-content:center}
+
+.detail-actions{display:flex;gap:12px;margin-bottom:28px}
+.btn-primary{flex:1;padding:14px 24px;background:var(--brown-dark);color:var(--cream);border:none;font-family:'Syne Mono',monospace;font-size:11px;letter-spacing:.2em;cursor:pointer;transition:background .2s,transform .15s;border-radius:2px}
+.btn-primary:hover{background:var(--brown);transform:translateY(-2px)}
+.btn-secondary{padding:14px 20px;background:transparent;color:var(--brown-dark);border:1.5px solid var(--border2);font-family:'Syne Mono',monospace;font-size:11px;letter-spacing:.2em;cursor:pointer;transition:all .2s;border-radius:2px}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold)}
+
+.detail-features{display:flex;flex-direction:column;gap:10px;padding:18px;background:var(--ivory);border:1px solid var(--border);border-radius:3px}
+.detail-feature{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-light)}
+.detail-feature-icon{color:var(--gold);font-size:14px;flex-shrink:0}
+
+/* ── CART VIEW ── */
+#cart-view{max-width:900px;margin:0 auto;padding:44px}
+@media(max-width:600px){#cart-view{padding:24px 20px}}
+.cart-back{font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin-bottom:28px;transition:color .2s}
+.cart-back::before{content:'←'}
+.cart-back:hover{color:var(--brown-dark)}
+.cart-header{margin-bottom:32px}
+.cart-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--ink)}
+.cart-title em{font-style:italic;color:var(--gold)}
+.cart-layout{display:grid;grid-template-columns:1fr 320px;gap:32px;align-items:start}
+@media(max-width:700px){.cart-layout{grid-template-columns:1fr}}
+
+.cart-items{display:flex;flex-direction:column;gap:0}
+.cart-item{display:grid;grid-template-columns:72px 1fr auto;gap:16px;align-items:center;border-top:1px solid var(--border);padding:18px 0}
+.cart-item:last-child{border-bottom:1px solid var(--border)}
+.cart-item-thumb{width:72px;height:72px;background:var(--parchment);border:1px solid var(--border);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.cart-item-name{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--ink);margin-bottom:3px}
+.cart-item-meta{font-family:'Syne Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--muted);margin-bottom:8px}
+.cart-item-qty{display:flex;align-items:center;gap:0;border:1px solid var(--border);border-radius:2px;width:fit-content}
+.cqty-btn{width:28px;height:28px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;transition:background .15s;display:flex;align-items:center;justify-content:center}
+.cqty-btn:hover{background:var(--parchment);color:var(--brown-dark)}
+.cqty-val{width:32px;text-align:center;font-family:'Syne Mono',monospace;font-size:11px;color:var(--ink);border-left:1px solid var(--border);border-right:1px solid var(--border);height:28px;display:flex;align-items:center;justify-content:center}
+.cart-item-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.cart-item-price{font-family:'Syne Mono',monospace;font-size:13px;color:var(--brown-dark);letter-spacing:.05em}
+.cart-item-remove{background:none;border:none;font-size:16px;color:var(--muted);cursor:pointer;transition:color .2s;line-height:1}
+.cart-item-remove:hover{color:#c04040}
+
+.cart-empty{text-align:center;padding:60px 20px}
+.cart-empty-icon{font-size:48px;margin-bottom:14px}
+.cart-empty-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--muted);margin-bottom:8px}
+.cart-empty-sub{font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted)}
+
+.cart-summary{background:var(--ivory);border:1px solid var(--border);border-radius:3px;padding:24px;position:sticky;top:80px}
+.summary-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--ink);margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.summary-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:14px;color:var(--ink-light)}
+.summary-row .label{font-family:'Syne Mono',monospace;font-size:9.5px;letter-spacing:.15em;color:var(--muted)}
+.summary-row .val{font-family:'Syne Mono',monospace;font-size:11px;color:var(--brown-dark)}
+.summary-total{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--border);margin-top:4px;margin-bottom:20px}
+.summary-total .label{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--ink)}
+.summary-total .val{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--brown-dark)}
+.promo-wrap{display:flex;gap:8px;margin-bottom:18px}
+.promo-input{flex:1;padding:9px 12px;border:1px solid var(--border);background:var(--cream);font-family:'Syne Mono',monospace;font-size:10px;color:var(--ink);outline:none;border-radius:2px;letter-spacing:.1em}
+.promo-input:focus{border-color:var(--gold)}
+.promo-input::placeholder{color:var(--muted)}
+.promo-btn{padding:9px 14px;background:var(--parchment);border:1px solid var(--border2);font-family:'Syne Mono',monospace;font-size:10px;color:var(--brown);cursor:pointer;border-radius:2px;transition:all .2s;letter-spacing:.1em}
+.promo-btn:hover{background:var(--parchment2);border-color:var(--gold)}
+.checkout-btn{width:100%;padding:14px;background:var(--gold);color:var(--brown-dark);border:none;font-family:'Syne Mono',monospace;font-size:11px;letter-spacing:.2em;cursor:pointer;transition:background .2s,transform .15s;border-radius:2px;font-weight:700}
+.checkout-btn:hover{background:var(--gold-light);transform:translateY(-1px)}
+.checkout-btn:disabled{opacity:.4;pointer-events:none}
+
+/* ── CHECKOUT VIEW ── */
+#checkout-view{max-width:900px;margin:0 auto;padding:44px}
+@media(max-width:600px){#checkout-view{padding:24px 20px}}
+.checkout-back{font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin-bottom:28px;transition:color .2s}
+.checkout-back::before{content:'←'}
+.checkout-back:hover{color:var(--brown-dark)}
+.checkout-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--ink);margin-bottom:32px}
+.checkout-title em{font-style:italic;color:var(--gold)}
+.checkout-layout{display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start}
+@media(max-width:700px){.checkout-layout{grid-template-columns:1fr}}
+
+.checkout-form{display:flex;flex-direction:column;gap:0}
+.form-section{margin-bottom:28px}
+.form-section-title{font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.25em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.form-section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.form-row.full{grid-template-columns:1fr}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-label{font-family:'Syne Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+.form-input{padding:11px 14px;border:1px solid var(--border);background:var(--ivory);font-family:'Syne',sans-serif;font-size:14px;color:var(--ink);outline:none;border-radius:2px;transition:border-color .2s}
+.form-input:focus{border-color:var(--gold);background:var(--cream)}
+.form-input::placeholder{color:var(--muted);font-size:13px}
+
+.payment-cards{display:flex;gap:8px;margin-bottom:16px}
+.pay-card{flex:1;padding:12px;border:1.5px solid var(--border);border-radius:3px;cursor:pointer;text-align:center;font-size:20px;transition:all .2s}
+.pay-card:hover,.pay-card.selected{border-color:var(--gold);background:var(--gold-pale)}
+
+.place-order-btn{width:100%;padding:15px;background:var(--brown-dark);color:var(--cream);border:none;font-family:'Syne Mono',monospace;font-size:11px;letter-spacing:.25em;cursor:pointer;transition:background .2s,transform .15s;border-radius:2px;margin-top:8px}
+.place-order-btn:hover{background:var(--brown);transform:translateY(-2px)}
+
+.order-summary-mini{background:var(--ivory);border:1px solid var(--border);border-radius:3px;padding:20px;position:sticky;top:80px}
+.osm-title{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--ink);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.osm-items{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.osm-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-light)}
+.osm-item-icon{font-size:20px;width:36px;height:36px;background:var(--parchment);border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.osm-item-name{flex:1;font-family:'Cormorant Garamond',serif;font-size:14px}
+.osm-item-price{font-family:'Syne Mono',monospace;font-size:11px;color:var(--brown-dark)}
+.osm-total{display:flex;justify-content:space-between;padding-top:12px;border-top:1px solid var(--border);font-family:'Syne Mono',monospace;font-size:12px;color:var(--brown-dark);letter-spacing:.1em}
+
+/* ── CONFIRMATION VIEW ── */
+#confirm-view{max-width:600px;margin:80px auto;padding:0 24px;text-align:center}
+.confirm-icon{font-size:64px;margin-bottom:20px;animation:popIn .5s cubic-bezier(.77,0,.175,1)}
+@keyframes popIn{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.confirm-title{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5vw,52px);font-weight:300;color:var(--ink);margin-bottom:10px}
+.confirm-title em{font-style:italic;color:var(--gold)}
+.confirm-sub{font-size:15px;color:var(--muted);margin-bottom:36px;line-height:1.7;max-width:400px;margin-left:auto;margin-right:auto}
+.confirm-order-num{font-family:'Syne Mono',monospace;font-size:11px;letter-spacing:.25em;color:var(--gold);background:var(--gold-pale);border:1px solid rgba(200,152,10,.2);padding:10px 24px;border-radius:2px;display:inline-block;margin-bottom:36px}
+.confirm-details{background:var(--ivory);border:1px solid var(--border);border-radius:3px;padding:24px;text-align:left;margin-bottom:32px}
+.confirm-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.confirm-row:last-child{border-bottom:none;font-weight:600}
+.confirm-row .ck{font-family:'Syne Mono',monospace;font-size:9.5px;letter-spacing:.12em;color:var(--muted)}
+.confirm-row .cv{font-family:'Syne Mono',monospace;font-size:11px;color:var(--brown-dark)}
+.confirm-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.confirm-btn-primary{padding:13px 28px;background:var(--brown-dark);color:var(--cream);border:none;font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.2em;cursor:pointer;border-radius:2px;transition:background .2s}
+.confirm-btn-primary:hover{background:var(--brown)}
+.confirm-btn-secondary{padding:13px 28px;background:transparent;color:var(--brown-dark);border:1.5px solid var(--border2);font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.2em;cursor:pointer;border-radius:2px;transition:all .2s}
+.confirm-btn-secondary:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:28px;right:28px;z-index:1000;background:var(--brown-dark);color:var(--cream);font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:.15em;padding:13px 20px;border-radius:3px;transform:translateY(80px);opacity:0;transition:all .35s cubic-bezier(.77,0,.175,1);display:flex;align-items:center;gap:10px;max-width:300px;box-shadow:0 8px 24px var(--shadow)}
+#toast.show{transform:translateY(0);opacity:1}
+#toast .t-icon{font-size:16px;flex-shrink:0}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.product-card{animation:fadeUp .4s ease forwards;opacity:0}
+</style>
+</head>
+<body>
+
+<!-- ── TOPNAV ── -->
+<nav id="topnav">
+  <div class="nav-left">
+    <div class="nav-logo" onclick="showView('shop')"><span>✦</span> Impulse-Buy</div>
+    <div class="nav-links">
+      <span class="nav-link active" data-cat="all" onclick="filterCat('all',this)">All</span>
+      <span class="nav-link" data-cat="living" onclick="filterCat('living',this)">Living</span>
+      <span class="nav-link" data-cat="jewellery" onclick="filterCat('jewellery',this)">Jewellery</span>
+      <span class="nav-link" data-cat="ceramics" onclick="filterCat('ceramics',this)">Ceramics</span>
+      <span class="nav-link" data-cat="objects" onclick="filterCat('objects',this)">Objects</span>
+    </div>
+  </div>
+  <div class="nav-right">
+    <a href="devstory.html" class="nav-back">← portfolio</a>
+    <button class="cart-btn" onclick="showView('cart')">
+      🛒 Cart
+      <span class="cart-count" id="cart-count">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ══════════════ SHOP VIEW ══════════════ -->
+<div class="view active" id="view-shop">
+  <div id="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-tag">Curated · Premium · Considered</div>
+        <h1 class="hero-title">Things worth<br><em>owning.</em></h1>
+        <p class="hero-sub">A curated collection of premium objects — each piece designed with intent. No impulse, just quality.</p>
+        <button class="hero-cta" onclick="document.getElementById('product-grid').scrollIntoView({behavior:'smooth'})">
+          Shop the Collection →
+        </button>
+      </div>
+      <div class="hero-right">
+        <div class="hero-stat-row">
+          <div class="hero-stat">
+            <div class="hero-stat-val">48</div>
+            <div class="hero-stat-key">PRODUCTS</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-val">4</div>
+            <div class="hero-stat-key">CATEGORIES</div>
+          </div>
+        </div>
+        <div class="hero-featured" onclick="openProduct(0)">
+          <div class="hero-featured-thumb">🏺</div>
+          <div>
+            <div class="hero-featured-tag">FEATURED PIECE</div>
+            <div class="hero-featured-name">Heirloom Vase No.1</div>
+            <div class="hero-featured-price">R 1,200.00</div>
+          </div>
+        </div>
+        <div class="hero-featured" onclick="openProduct(4)">
+          <div class="hero-featured-thumb">💍</div>
+          <div>
+            <div class="hero-featured-tag">NEW ARRIVAL</div>
+            <div class="hero-featured-name">Arc Ring — Gold</div>
+            <div class="hero-featured-price">R 2,800.00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="shop-bar">
+    <div class="shop-title">The <em>Collection</em></div>
+    <div class="shop-controls">
+      <div class="cat-filter" id="cat-filter">
+        <button class="cat-btn active" data-cat="all" onclick="filterCat('all',this)">All</button>
+        <button class="cat-btn" data-cat="living" onclick="filterCat('living',this)">Living</button>
+        <button class="cat-btn" data-cat="jewellery" onclick="filterCat('jewellery',this)">Jewellery</button>
+        <button class="cat-btn" data-cat="ceramics" onclick="filterCat('ceramics',this)">Ceramics</button>
+        <button class="cat-btn" data-cat="objects" onclick="filterCat('objects',this)">Objects</button>
+      </div>
+      <select class="sort-select" id="sort-select" onchange="renderGrid()">
+        <option value="default">Sort: Featured</option>
+        <option value="price-asc">Price: Low → High</option>
+        <option value="price-desc">Price: High → Low</option>
+        <option value="name">Name: A → Z</option>
+      </select>
+    </div>
+  </div>
+  <div id="product-grid"></div>
+</div>
+
+<!-- ══════════════ DETAIL VIEW ══════════════ -->
+<div class="view" id="view-detail">
+  <div id="detail-view">
+    <div class="detail-back" onclick="showView('shop')">Back to shop</div>
+    <div class="detail-grid">
+      <div>
+        <div class="detail-viewer" id="detail-viewer">
+          <div class="detail-viewer-icon" id="detail-icon">🏺</div>
+          <div class="detail-viewer-label">3D Model Preview</div>
+          <div class="detail-viewer-hint">Your 3D model will render here</div>
+        </div>
+        <div class="detail-thumbs" id="detail-thumbs"></div>
+      </div>
+      <div class="detail-info">
+        <div class="detail-cat" id="detail-cat"></div>
+        <div class="detail-name" id="detail-name"></div>
+        <div class="detail-rating">
+          <div class="stars" id="detail-stars"></div>
+          <div class="rating-count" id="detail-rating-count"></div>
+        </div>
+        <div class="detail-price" id="detail-price"></div>
+        <div class="detail-price-note">Free delivery on orders over R 1,500</div>
+        <div class="detail-divider"></div>
+        <div class="detail-desc" id="detail-desc"></div>
+        <div class="detail-options" id="detail-options"></div>
+        <div style="margin-bottom:16px">
+          <div class="option-label" style="margin-bottom:8px">Quantity</div>
+          <div class="detail-qty">
+            <button class="qty-btn" onclick="changeQty(-1)">−</button>
+            <div class="qty-val" id="qty-val">1</div>
+            <button class="qty-btn" onclick="changeQty(1)">+</button>
+          </div>
+        </div>
+        <div class="detail-actions">
+          <button class="btn-primary" onclick="addToCartFromDetail()">Add to Cart</button>
+          <button class="btn-secondary" onclick="showView('cart')">View Cart</button>
+        </div>
+        <div class="detail-features">
+          <div class="detail-feature"><span class="detail-feature-icon">✦</span> Handcrafted with premium materials</div>
+          <div class="detail-feature"><span class="detail-feature-icon">↩</span> 30-day returns accepted</div>
+          <div class="detail-feature"><span class="detail-feature-icon">📦</span> Carefully packaged & insured</div>
+          <div class="detail-feature"><span class="detail-feature-icon">🌍</span> Ships nationwide</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ CART VIEW ══════════════ -->
+<div class="view" id="view-cart">
+  <div id="cart-view">
+    <div class="cart-back" onclick="showView('shop')">Continue shopping</div>
+    <div class="cart-header">
+      <div class="cart-title">Your <em>Cart</em></div>
+    </div>
+    <div class="cart-layout">
+      <div id="cart-items-wrap"></div>
+      <div class="cart-summary">
+        <div class="summary-title">Order Summary</div>
+        <div class="summary-row"><span class="label">SUBTOTAL</span><span class="val" id="summary-subtotal">R 0.00</span></div>
+        <div class="summary-row"><span class="label">DELIVERY</span><span class="val" id="summary-delivery">R 0.00</span></div>
+        <div class="summary-row"><span class="label">DISCOUNT</span><span class="val" id="summary-discount">—</span></div>
+        <div class="summary-total"><span class="label">Total</span><span class="val" id="summary-total">R 0.00</span></div>
+        <div class="promo-wrap">
+          <input class="promo-input" id="promo-input" placeholder="Promo code…">
+          <button class="promo-btn" onclick="applyPromo()">Apply</button>
+        </div>
+        <button class="checkout-btn" id="checkout-btn" onclick="showView('checkout')">Proceed to Checkout →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ CHECKOUT VIEW ══════════════ -->
+<div class="view" id="view-checkout">
+  <div id="checkout-view">
+    <div class="checkout-back" onclick="showView('cart')">Back to cart</div>
+    <div class="checkout-title">Secure <em>Checkout</em></div>
+    <div class="checkout-layout">
+      <div class="checkout-form">
+        <div class="form-section">
+          <div class="form-section-title">Contact Information</div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">First Name</label><input class="form-input" placeholder="Joline"></div>
+            <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" placeholder="Janse van Rensburg"></div>
+          </div>
+          <div class="form-row full">
+            <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" type="email" placeholder="jvrenjoline357@gmail.com"></div>
+          </div>
+          <div class="form-row full">
+            <div class="form-group"><label class="form-label">Phone Number</label><input class="form-input" type="tel" placeholder="+27 63 479 7919"></div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">Delivery Address</div>
+          <div class="form-row full">
+            <div class="form-group"><label class="form-label">Street Address</label><input class="form-input" placeholder="123 Main Street"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">City</label><input class="form-input" placeholder="Johannesburg"></div>
+            <div class="form-group"><label class="form-label">Postal Code</label><input class="form-input" placeholder="2000"></div>
+          </div>
+          <div class="form-row full">
+            <div class="form-group"><label class="form-label">Province</label>
+              <select class="form-input">
+                <option>Gauteng</option><option>Western Cape</option><option>KwaZulu-Natal</option>
+                <option>Eastern Cape</option><option>Limpopo</option><option>Mpumalanga</option>
+                <option>North West</option><option>Free State</option><option>Northern Cape</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">Payment Method</div>
+          <div class="payment-cards">
+            <div class="pay-card selected" onclick="selectPay(this)">💳</div>
+            <div class="pay-card" onclick="selectPay(this)">🏦</div>
+            <div class="pay-card" onclick="selectPay(this)">📱</div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Card Number</label><input class="form-input" placeholder="0000 0000 0000 0000"></div>
+            <div class="form-group"><label class="form-label">Expiry</label><input class="form-input" placeholder="MM / YY"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Name on Card</label><input class="form-input" placeholder="Joline JvR"></div>
+            <div class="form-group"><label class="form-label">CVV</label><input class="form-input" placeholder="•••"></div>
+          </div>
+        </div>
+        <button class="place-order-btn" onclick="placeOrder()">✦ Place Order</button>
+      </div>
+      <div class="order-summary-mini">
+        <div class="osm-title">Your Order</div>
+        <div class="osm-items" id="osm-items"></div>
+        <div class="osm-total"><span>Total</span><span id="osm-total">R 0.00</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ CONFIRMATION VIEW ══════════════ -->
+<div class="view" id="view-confirm">
+  <div id="confirm-view">
+    <div class="confirm-icon">✦</div>
+    <h1 class="confirm-title">Order <em>placed.</em></h1>
+    <p class="confirm-sub">Thank you for your purchase. Your order has been confirmed and will be carefully packaged and dispatched soon.</p>
+    <div class="confirm-order-num" id="confirm-order-num">ORDER #000000</div>
+    <div class="confirm-details" id="confirm-details"></div>
+    <div class="confirm-actions">
+      <button class="confirm-btn-primary" onclick="continueShopping()">✦ Continue Shopping</button>
+      <button class="confirm-btn-secondary" onclick="showView('shop')">Back to Store</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"><span class="t-icon" id="toast-icon">✦</span><span id="toast-msg">Added to cart</span></div>
+
+<script>
+/* ═══════════════════════════ PRODUCT DATA ═══════════════════════════ */
+const PRODUCTS = [
+  // CERAMICS
+  {id:0,name:'Heirloom Vase No.1',cat:'ceramics',price:1200,icon:'🏺',badge:'featured',rating:4.8,reviews:24,desc:'A hand-thrown stoneware vase with a matte ivory glaze and subtle texture marks from the wheel. Each piece is unique — no two are identical.',options:{Finish:['Ivory Matte','Sage Green','Charcoal'],Size:['Small','Medium','Large']}},
+  {id:1,name:'Ritual Bowl',cat:'ceramics',price:680,icon:'🥣',badge:'new',rating:4.9,reviews:18,desc:'A wide, shallow bowl perfect for offering fruit, keys, or quiet contemplation. Glazed interior with a raw exterior edge.',options:{Glaze:['White','Terracotta','Midnight']}},
+  {id:2,name:'Tall Stem Vase',cat:'ceramics',price:950,icon:'🫙',badge:null,rating:4.7,reviews:11,desc:'An elongated form with a narrow neck, ideal for a single stem or dried botanicals. Wheel-thrown with a natural ash glaze.',options:{Height:['30cm','45cm','60cm'],Finish:['Natural Ash','Cream','Slate']}},
+  {id:3,name:'Espresso Cup Set',cat:'ceramics',price:480,badge:null,icon:'☕',rating:4.6,reviews:33,desc:'A set of four hand-thrown espresso cups. Satisfying to hold, beautiful to use every morning.',options:{Set:['2 cups','4 cups','6 cups'],Colour:['Ivory','Sage','Black']}},
+
+  // JEWELLERY
+  {id:4,name:'Arc Ring — Gold',cat:'jewellery',price:2800,icon:'💍',badge:'new',rating:5.0,reviews:7,desc:'A minimalist arc-form ring in 18ct gold-filled brass. Clean geometry, comfortable fit. Available in whole sizes.',options:{Size:['5','6','7','8','9','10'],Metal:['Gold Fill','Silver','Rose Gold']}},
+  {id:5,name:'Column Earrings',cat:'jewellery',price:1600,icon:'✨',badge:null,rating:4.8,reviews:15,desc:'Architectural drop earrings inspired by ancient column forms. Lightweight sterling silver with a brushed finish.',options:{Metal:['Sterling Silver','Gold Fill'],Style:['Short','Long']}},
+  {id:6,name:'Strand Necklace',cat:'jewellery',price:2200,icon:'📿',badge:'limited',rating:4.9,reviews:9,desc:'A delicate multi-strand necklace with hand-knotted silk thread and a single sculptural pendant.',options:{Length:['40cm','45cm','50cm'],Thread:['Ivory','Black','Gold']}},
+  {id:7,name:'Cuff Bracelet',cat:'jewellery',price:1900,icon:'⭕',badge:null,rating:4.7,reviews:21,desc:'A solid open cuff in sterling silver. Adjustable opening, hand-polished to a mirror finish.',options:{Metal:['Sterling Silver','Gold Fill','Oxidised'],Width:['Thin','Medium','Wide']}},
+
+  // LIVING
+  {id:8,name:'Linen Throw',cat:'living',price:1400,icon:'🧣',badge:null,rating:4.8,reviews:42,desc:'A generously sized throw in 100% European linen. Stonewashed for softness, naturally anti-static and breathable.',options:{Colour:['Oat','Charcoal','Sage','Rust'],Size:['130×170cm','150×200cm']}},
+  {id:9,name:'Beeswax Candle',cat:'living',price:320,icon:'🕯️',badge:'new',rating:4.9,reviews:58,desc:'Hand-poured pure beeswax in a reusable ceramic vessel. Burns clean for 60+ hours with a warm honey scent.',options:{Scent:['Unscented','Honey & Vanilla','Cedar & Smoke'],Size:['Small 200g','Large 450g']}},
+  {id:10,name:'Marble Tray',cat:'living',price:880,icon:'🪨',badge:null,rating:4.6,reviews:19,desc:'A solid marble serving tray with brass handles. Each tray has unique natural veining — no two are the same.',options:{Stone:['White Carrara','Black Marquina','Green'],Size:['30cm','40cm','50cm']}},
+  {id:11,name:'Brass Letter Opener',cat:'living',price:560,icon:'🗡️',badge:'limited',rating:4.7,reviews:14,desc:'A sculptural solid brass letter opener. More object than tool — a satisfying weight in the hand.',options:{Finish:['Polished','Aged Brass','Blackened']}},
+
+  // OBJECTS
+  {id:12,name:'Desk Sculpture No.3',cat:'objects',price:3200,icon:'🗿',badge:'limited',rating:5.0,reviews:6,desc:'A small abstract desk sculpture in solid cast resin with a stone-like finish. A quiet presence on any surface.',options:{Finish:['Stone White','Charcoal','Terracotta'],Edition:['Standard','Signed']}},
+  {id:13,name:'Paperweight Sphere',cat:'objects',price:740,icon:'🔮',badge:null,rating:4.8,reviews:22,desc:'A weighty solid glass sphere that refracts light beautifully throughout the day. Satisfying to hold and move.',options:{Size:['60mm','80mm','100mm'],Colour:['Clear','Smoke','Amber']}},
+  {id:14,name:'Sundial Card Holder',cat:'objects',price:920,icon:'🌞',badge:'new',rating:4.9,reviews:11,desc:'A precision-cut solid brass card holder inspired by sundial geometry. Functional art for your desk.',options:{Finish:['Polished Brass','Aged','Blackened']}},
+  {id:15,name:'Woven Wall Panel',cat:'objects',price:2600,icon:'🎨',badge:null,rating:4.7,reviews:8,desc:'A hand-woven wall panel in natural wool and cotton. Each panel takes 8+ hours to make. Limited runs only.',options:{Size:['40×60cm','60×90cm'],Palette:['Natural','Desert','Forest']}},
+];
+
+/* ═══════════════════════════ STATE ═══════════════════════════ */
+let cart       = [];
+let activeFilter = 'all';
+let currentProduct = null;
+let currentQty = 1;
+let discount   = 0;
+const DELIVERY = 150;
+const FREE_DELIVERY = 1500;
+
+/* ═══════════════════════════ VIEWS ═══════════════════════════ */
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(`view-${name}`).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if (name === 'cart')     renderCart();
+  if (name === 'checkout') renderCheckoutSummary();
+}
+
+/* ═══════════════════════════ FILTER & SORT ═══════════════════════════ */
+function filterCat(cat, el) {
+  activeFilter = cat;
+  document.querySelectorAll('.cat-btn,.nav-link').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll(`[data-cat="${cat}"]`).forEach(b => b.classList.add('active'));
+  renderGrid();
+}
+
+function renderGrid() {
+  const sort  = document.getElementById('sort-select').value;
+  let items = activeFilter === 'all' ? [...PRODUCTS] : PRODUCTS.filter(p => p.cat === activeFilter);
+  if (sort === 'price-asc')  items.sort((a,b) => a.price - b.price);
+  if (sort === 'price-desc') items.sort((a,b) => b.price - a.price);
+  if (sort === 'name')       items.sort((a,b) => a.name.localeCompare(b.name));
+
+  const grid = document.getElementById('product-grid');
+  grid.innerHTML = '';
+  items.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.style.animationDelay = `${i * 0.05}s`;
+    const badge = p.badge ? `<span class="product-badge badge-${p.badge === 'sale' ? 'sale' : p.badge === 'new' ? 'new' : 'limited'}">${p.badge}</span>` : '';
+    card.innerHTML = `
+      <div class="product-thumb">
+        <div class="product-thumb-icon">${p.icon}</div>
+        <div class="product-thumb-label">3D Preview</div>
+        ${badge}
+      </div>
+      <div class="product-body">
+        <div class="product-cat">${p.cat}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-footer">
+          <div class="product-price">R ${p.price.toLocaleString('en-ZA', {minimumFractionDigits:2})}</div>
+          <button class="product-add" onclick="event.stopPropagation();quickAdd(${p.id})">+</button>
+        </div>
+      </div>`;
+    card.addEventListener('click', () => openProduct(p.id));
+    grid.appendChild(card);
+  });
+}
+
+/* ═══════════════════════════ PRODUCT DETAIL ═══════════════════════════ */
+function openProduct(id) {
+  currentProduct = PRODUCTS.find(p => p.id === id);
+  currentQty = 1;
+  if (!currentProduct) return;
+  const p = currentProduct;
+
+  document.getElementById('detail-icon').textContent = p.icon;
+  document.getElementById('detail-cat').textContent  = p.cat.toUpperCase();
+  document.getElementById('detail-name').innerHTML   = p.name.includes(' ')
+    ? p.name.split(' ').map((w,i) => i === p.name.split(' ').length-1 ? `<em>${w}</em>` : w).join(' ')
+    : p.name;
+  document.getElementById('detail-stars').textContent = '★'.repeat(Math.floor(p.rating)) + (p.rating % 1 ? '½' : '');
+  document.getElementById('detail-rating-count').textContent = `${p.rating} · ${p.reviews} reviews`;
+  document.getElementById('detail-price').innerHTML  = `R ${p.price.toLocaleString('en-ZA',{minimumFractionDigits:2})}`;
+  document.getElementById('detail-desc').textContent = p.desc;
+  document.getElementById('qty-val').textContent = 1;
+
+  // options
+  const optWrap = document.getElementById('detail-options');
+  optWrap.innerHTML = '';
+  if (p.options) {
+    Object.entries(p.options).forEach(([key, vals]) => {
+      const div = document.createElement('div');
+      div.className = 'detail-options';
+      div.style.marginBottom = '16px';
+      div.innerHTML = `<div class="option-label" style="margin-bottom:8px">${key}</div>
+        <div class="option-chips">${vals.map((v,i) =>
+          `<div class="option-chip${i===0?' selected':''}" onclick="selectChip(this,'${key}')">${v}</div>`
+        ).join('')}</div>`;
+      optWrap.appendChild(div);
+    });
+  }
+
+  // thumbs (angles)
+  const thumbs = document.getElementById('detail-thumbs');
+  thumbs.innerHTML = ['Front','Side','Top','Detail'].map((a,i) =>
+    `<div class="detail-thumb${i===0?' active':''}" onclick="selectThumb(this)">${p.icon}</div>`
+  ).join('');
+
+  showView('detail');
+}
+
+function selectChip(el, group) {
+  el.closest('.option-chips').querySelectorAll('.option-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectThumb(el) {
+  document.querySelectorAll('.detail-thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function changeQty(delta) {
+  currentQty = Math.max(1, currentQty + delta);
+  document.getElementById('qty-val').textContent = currentQty;
+}
+
+function addToCartFromDetail() {
+  if (!currentProduct) return;
+  for (let i = 0; i < currentQty; i++) addToCart(currentProduct.id);
+}
+
+/* ═══════════════════════════ CART ═══════════════════════════ */
+function addToCart(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  const existing = cart.find(x => x.id === id);
+  if (existing) existing.qty++;
+  else cart.push({id: p.id, qty: 1});
+  updateCartCount();
+  showToast(`${p.icon} ${p.name} added to cart`);
+}
+
+function quickAdd(id) {
+  addToCart(id);
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(x => x.id !== id);
+  renderCart();
+  updateCartCount();
+}
+
+function updateCartQty(id, delta) {
+  const item = cart.find(x => x.id === id);
+  if (!item) return;
+  item.qty = Math.max(1, item.qty + delta);
+  renderCart();
+  updateCartCount();
+}
+
+function updateCartCount() {
+  const total = cart.reduce((s,x) => s + x.qty, 0);
+  const el = document.getElementById('cart-count');
+  el.textContent = total;
+  el.classList.remove('bump');
+  void el.offsetWidth;
+  el.classList.add('bump');
+}
+
+function getSubtotal() {
+  return cart.reduce((s,x) => {
+    const p = PRODUCTS.find(pr => pr.id === x.id);
+    return s + (p ? p.price * x.qty : 0);
+  }, 0);
+}
+
+function renderCart() {
+  const wrap    = document.getElementById('cart-items-wrap');
+  const sub     = getSubtotal();
+  const delivery = sub >= FREE_DELIVERY ? 0 : (cart.length ? DELIVERY : 0);
+  const total   = sub + delivery - discount;
+
+  document.getElementById('summary-subtotal').textContent = `R ${sub.toLocaleString('en-ZA',{minimumFractionDigits:2})}`;
+  document.getElementById('summary-delivery').textContent = delivery === 0 && sub >= FREE_DELIVERY
+    ? 'FREE' : `R ${delivery.toLocaleString('en-ZA',{minimumFractionDigits:2})}`;
+  document.getElementById('summary-discount').textContent = discount
+    ? `− R ${discount.toLocaleString('en-ZA',{minimumFractionDigits:2})}` : '—';
+  document.getElementById('summary-total').textContent    = `R ${Math.max(0,total).toLocaleString('en-ZA',{minimumFractionDigits:2})}`;
+
+  const checkoutBtn = document.getElementById('checkout-btn');
+  checkoutBtn.disabled = cart.length === 0;
+
+  if (!cart.length) {
+    wrap.innerHTML = `<div class="cart-empty">
+      <div class="cart-empty-icon">🛒</div>
+      <div class="cart-empty-title">Your cart is empty</div>
+      <div class="cart-empty-sub">Add something beautiful</div>
+    </div>`;
+    return;
+  }
+
+  wrap.innerHTML = `<div class="cart-items">${cart.map(x => {
+    const p = PRODUCTS.find(pr => pr.id === x.id);
+    if (!p) return '';
+    return `<div class="cart-item">
+      <div class="cart-item-thumb">${p.icon}</div>
+      <div>
+        <div class="cart-item-name">${p.name}</div>
+        <div class="cart-item-meta">${p.cat.toUpperCase()}</div>
+        <div class="cart-item-qty">
+          <button class="cqty-btn" onclick="updateCartQty(${p.id},-1)">−</button>
+          <div class="cqty-val">${x.qty}</div>
+          <button class="cqty-btn" onclick="updateCartQty(${p.id},1)">+</button>
+        </div>
+      </div>
+      <div class="cart-item-right">
+        <div class="cart-item-price">R ${(p.price*x.qty).toLocaleString('en-ZA',{minimumFractionDigits:2})}</div>
+        <button class="cart-item-remove" onclick="removeFromCart(${p.id})">×</button>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function applyPromo() {
+  const code = document.getElementById('promo-input').value.trim().toUpperCase();
+  if (code === 'JOLINE10') { discount = Math.round(getSubtotal() * 0.1); showToast('✦ 10% discount applied!'); }
+  else if (code === 'WELCOME') { discount = 200; showToast('✦ R 200 discount applied!'); }
+  else { showToast('⚠ Invalid promo code'); discount = 0; }
+  renderCart();
+}
+
+/* ═══════════════════════════ CHECKOUT ═══════════════════════════ */
+function renderCheckoutSummary() {
+  const sub      = getSubtotal();
+  const delivery = sub >= FREE_DELIVERY ? 0 : DELIVERY;
+  const total    = sub + delivery - discount;
+  document.getElementById('osm-total').textContent = `R ${Math.max(0,total).toLocaleString('en-ZA',{minimumFractionDigits:2})}`;
+  document.getElementById('osm-items').innerHTML = cart.map(x => {
+    const p = PRODUCTS.find(pr => pr.id === x.id);
+    if (!p) return '';
+    return `<div class="osm-item">
+      <div class="osm-item-icon">${p.icon}</div>
+      <div class="osm-item-name">${p.name} <span style="color:var(--muted);font-size:12px">×${x.qty}</span></div>
+      <div class="osm-item-price">R ${(p.price*x.qty).toLocaleString('en-ZA',{minimumFractionDigits:2})}</div>
+    </div>`;
+  }).join('');
+}
+
+function selectPay(el) {
+  document.querySelectorAll('.pay-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function placeOrder() {
+  const orderNum = 'IB-' + Math.floor(100000 + Math.random() * 900000);
+  const sub      = getSubtotal();
+  const delivery = sub >= FREE_DELIVERY ? 0 : DELIVERY;
+  const total    = sub + delivery - discount;
+
+  document.getElementById('confirm-order-num').textContent = `ORDER ${orderNum}`;
+  document.getElementById('confirm-details').innerHTML = `
+    <div class="confirm-row"><span class="ck">ITEMS</span><span class="cv">${cart.reduce((s,x)=>s+x.qty,0)}</span></div>
+    <div class="confirm-row"><span class="ck">SUBTOTAL</span><span class="cv">R ${sub.toLocaleString('en-ZA',{minimumFractionDigits:2})}</span></div>
+    <div class="confirm-row"><span class="ck">DELIVERY</span><span class="cv">${delivery===0?'FREE':'R '+delivery.toLocaleString('en-ZA',{minimumFractionDigits:2})}</span></div>
+    <div class="confirm-row"><span class="ck">TOTAL PAID</span><span class="cv">R ${Math.max(0,total).toLocaleString('en-ZA',{minimumFractionDigits:2})}</span></div>`;
+
+  cart = [];
+  discount = 0;
+  updateCartCount();
+  showView('confirm');
+}
+
+function continueShopping() {
+  showView('shop');
+  renderGrid();
+}
+
+/* ═══════════════════════════ TOAST ═══════════════════════════ */
+let toastTimer;
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+/* ═══════════════════════════ INIT ═══════════════════════════ */
+renderGrid();
+updateCartCount();
+</script>
+</body>
+</html>
